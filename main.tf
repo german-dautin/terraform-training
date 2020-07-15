@@ -85,7 +85,7 @@ resource "aws_lb_listener_rule" "asg" {
 
     condition {
         field = "path_pattern"
-        values = [*]
+        values = ["*"]
     }
 
     action {
@@ -124,7 +124,7 @@ resource "aws_lb_target_group" "asg" {
         interval = 15
         timeout  = 3
         healthy_threshold = 2
-        unhealthy_threshold = 2вввввввв
+        unhealthy_threshold = 2
     }
 }
 
