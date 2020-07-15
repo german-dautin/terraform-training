@@ -33,7 +33,7 @@ resource "aws_launch_configuration" "test" {
 
 resource "aws_autoscaling_group" "test" {
     launch_configuration = aws_launch_configuration.test.name
-    vpc_zone_identifier  = aws_subnet_ids.default.ids
+    vpc_zone_identifier  = data.aws_subnet_ids.default.ids
 
     target_group_arns    = [aws_lb_target_group.asg.arn]
     health_check_type    = "ELB"
@@ -65,12 +65,12 @@ resource "aws_lb" "test" {
 }
 
 resource "aws_lb_listener" "http" {
-    load_balancer_arn = aws_lb.example.arn
+    load_balancer_arn = aws_lb.test.arn
     port              = 80
     protocol          = "HTTP"
 
     default_action {
-        type = "fixed_response"
+        type = "fixed-response"
         fixed_response {
             content_type = "text/plain"
             message_body = "404: Not found"
@@ -80,12 +80,13 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener_rule" "asg" {
-    listner_arn = aws_lb_listener.http.arn
+    listener_arn = aws_lb_listener.http.arn
     priority    = 100
 
     condition {
-        field = "path_pattern"
-        values = ["*"]
+        path_pattern {
+            values = ["*"]
+        }
     }
 
     action {
